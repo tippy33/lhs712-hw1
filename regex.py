@@ -59,7 +59,7 @@ def eng_to_number(month):
   # else:
   #   return month
 
-def first_is_month(first, second):
+def is_month(first, second):
   pattern = [r'^Jan[a-z]*', r'^Feb[a-z]*', r'^Mar[a-z]*', r'^Apr[a-z]*', 
             r'^May[a-z]*', r'^Jun[a-z]*', r'^Jul[a-z]*', r'^Aug[a-z]*', 
             r'^Sep[a-z]*', r'^Oct[a-z]*', r'^Nov[a-z]*', r'^Dec[a-z]*', ]
@@ -75,7 +75,7 @@ def first_is_month(first, second):
   elif first_is_num is False and second_is_num is True:
     return True  # April 15
   elif first_is_num is True and second_is_num is False:
-    return False  # 03 April
+    return False  # 06 Oct (#320)
   return False  # no case like this
 
 def parse_date():
@@ -90,8 +90,8 @@ def parse_date():
     date = None
     date_pattern = [r'([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2,4})', # 3, xx/xx/xx(xx)
                     r'([0-9]{1,2})-([0-9]{1,2})-([0-9]{2,4})', # 3, 08-30-1965
-                    r'(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s,?(\d{2,4})',
-                    r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s?(\d{2}),?\s(\d{2,4})',
+                    r'[^\d+](\d{1,2})\s?(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s?,?\s?(\d{2,4})',
+                    r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*.?\s?(\d{2}),?\s(\d{2,4})',
                     r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s?,?\s?(\d{2,4})',
                     # r'(\d{1,2}\s?)?(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s?(\d{1,2})?,?\s?(\d{2,4})',
                     # r'(\w+)\s([0-9]{1,2}),{0,1}\s([0-9]{2,4})', # 3, May 16(,) 1997
@@ -107,15 +107,18 @@ def parse_date():
         # print(len(date_group.groups()))
         # idx = 0
         date_group = []
-        print(date_group_)
-        print(date_group_.groups())
+        # print(date_group_)
+        # print(date_group_.groups())
         first_is_month = None
-        if len(date_group) == 3:
-          first_is_month = first_is_month(date_group[0], date_group[1])  # if date_group[0] True
+        if len(date_group_.groups()) == 3:
+          # print(str(date_group_[1]))
+          # print(type(date_group_[2]))
+          first_is_month = is_month(str(date_group_[1]), str(date_group_[2]))  # if date_group[0] True
+          # print(first_is_month)
         for d in date_group_.groups():   # change English month to number
           date_group.append(eng_to_number(d))
           # idx+=1
-        print(date_group)
+        # print(date_group)
         if len(date_group) == 3:  #xx/xx/xx or May 16, 1997
           if first_is_month is True:
             month = normalize_date('month', date_group[0])
