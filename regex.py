@@ -9,6 +9,11 @@ def normalize_date(type, date):
   else:
     return date
 
+def debug(line_number, orginal, date):
+  f = open('debug.txt', 'a')
+  f.write(line_number+'\t'+orginal+'\t'+date+'\n')
+  f.close()
+
 def write(line_number, date, end_date):
   # print(type(date))
   f = open('LHS712-Assg1-hngchris.txt', 'a')
@@ -121,6 +126,7 @@ def parse_date():
         date = str(year)+'-'+str(month)+'-'+str(day)
         # print(date)
         write(line_number=str(line_number[0]), date=date, end_date=push_date(date=date))
+        # debug(line_number=str(line_number[0]), orginal=date_group_[0], date=date)
         # print(date)
         break
   return
