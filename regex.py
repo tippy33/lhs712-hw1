@@ -1,4 +1,5 @@
 import re
+import datetime
 
 def normalize_date(type, date):
   if type == "year" and len(str(date)) == 2:
@@ -8,14 +9,22 @@ def normalize_date(type, date):
   else:
     return date
 
-def write(line_number, date):
+def write(line_number, date, end_date):
   # print(type(date))
   f = open('LHS712-Assg1-hngchris.txt', 'a')
-  f.write(line_number+'\t'+date+'\n')
+  f.write(line_number+'\t'+date+'\t'+end_date+'\n')
   f.close()
 
 def push_date(date):
-  return
+  date = re.search(r'(\d{4})-(\d{2})-(\d{2})', date)
+  # print(date[1], date[2], date[3])
+  year = int(date[1])
+  month = int(date[2])
+  day = int(date[3])
+  start_date = datetime.date(year=year, month=month, day=day)
+  end_date = start_date + datetime.timedelta(days=40)
+  # print(end_date)
+  return str(end_date)
 
 def eng_to_number(month):
   pattern = [r'^Jan[a-z]*', r'^Feb[a-z]*', r'^Mar[a-z]*', r'^Apr[a-z]*', 
@@ -31,33 +40,6 @@ def eng_to_number(month):
     else:
       idx+=1
   return month
-  
-  # if month == 'Jan' or month=='January':
-  #   return '01'
-  # elif month == 'Feb' or month=='February':
-  #   return '02'
-  # elif month == 'Mar' or month=='March':
-  #   return '03'
-  # elif month == 'Apr' or month=='April':
-  #   return '04'
-  # elif month == 'May':
-  #   return '05'
-  # elif month == 'June':
-  #   return '06'
-  # elif month == 'Jul' or month=='July':
-  #   return '07'
-  # elif month == 'Aug' or month=='August':
-  #   return '08'
-  # elif month == 'Sep' or month=='September':
-  #   return '09'
-  # elif month == 'Oct' or month=='October':
-  #   return '10'
-  # elif month == 'Nov' or month=='November':
-  #   return '11'
-  # elif month == 'Dec' or month=='December' or month=='Decemeber':
-  #   return '12'
-  # else:
-  #   return month
 
 def is_month(first, second):
   pattern = [r'^Jan[a-z]*', r'^Feb[a-z]*', r'^Mar[a-z]*', r'^Apr[a-z]*', 
@@ -84,7 +66,7 @@ def parse_date():
   lines = file.readlines()
   for l in lines:
     line_number = re.search(r'^[0-9]+', l)  # find line number
-    print(line_number[0])
+    # print(line_number[0])
     if line_number is None:
       continue   # no need to loop if line number is missing
     date = None
@@ -100,7 +82,7 @@ def parse_date():
                     # r'(\w+)\s([0-9]{2,4})', # 2, April 1354
                     r'([0-9]{4})'] # 1, xxxx
     for p in date_pattern:
-      print(p)
+      # print(p)
       date_group_ = re.search(p, l)
       # print(date_group.group())
       if date_group_ is not None:
@@ -137,8 +119,8 @@ def parse_date():
           month = '01'
           year = normalize_date('year', date_group[0])
         date = str(year)+'-'+str(month)+'-'+str(day)
-        print(date)
-        write(line_number=str(line_number[0]), date=date)
+        # print(date)
+        write(line_number=str(line_number[0]), date=date, end_date=push_date(date=date))
         # print(date)
         break
   return
