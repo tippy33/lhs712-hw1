@@ -23,26 +23,33 @@ def write(line_number, date, end_date, push_date_en):
   f.close()
 
 def push_date_en(push_date):
+  # print(push_date)
   months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  date = re.search(r'(\d{4})-(\d{2})-(\d{2})', push_date)
-  year = int(date[1])
-  month = int(date[2])
-  day = int(date[3])
+  date = re.search(r'(\d{2})-(\d{2})-(\d{4})', push_date)
+  year = int(date[3])
+  month = normalize_date('month', int(date[1]))
+  day = normalize_date('day', int(date[2]))
   if original_date_is_en.pop() == True:  # English form
-    return str(months[month-1])+' '+str(day)+', '+str(year)
+    return str(months[int(month)-1])+' '+str(day)+', '+str(year)
   else:  # Number form
     return str(month)+'/'+str(day)+'/'+str(year)
 
 def push_date(date):
-  date = re.search(r'(\d{4})-(\d{2})-(\d{2})', date)
+  # print(date)
+  date = re.search(r'(\d{2})-(\d{2})-(\d{4})', date)
   # print(date[1], date[2], date[3])
-  year = int(date[1])
-  month = int(date[2])
-  day = int(date[3])
+  year = int(date[3])
+  month = int(date[1])
+  day = int(date[2])
   start_date = datetime.date(year=year, month=month, day=day)
   end_date = start_date + datetime.timedelta(days=40)
   # print(end_date)
-  return str(end_date)
+  date = re.search(r'(\d{4})-(\d{1,2})-(\d{1,2})', str(end_date))
+  year = int(date[1])
+  month = normalize_date('month', int(date[2]))
+  day = normalize_date('day', int(date[3]))
+  final_date = str(month)+'-'+str(day)+'-'+str(year)
+  return final_date
 
 def eng_to_number(month):
   pattern = [r'^Jan[a-z]*', r'^Feb[a-z]*', r'^Mar[a-z]*', r'^Apr[a-z]*', 
@@ -132,7 +139,7 @@ def parse_date():
           day = '01'
           month = '01'
           year = normalize_date('year', date_group[0])
-        date = str(year)+'-'+str(month)+'-'+str(day)
+        date = str(month)+'-'+str(day)+'-'+str(year)
         pushed_date = push_date(date)
         write(line_number=str(line_number[0]), date=date, end_date=pushed_date, push_date_en=push_date_en(pushed_date))
         break
